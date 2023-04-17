@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 import torchmetrics
+import torchvision
 from metrics import myAccuracy
 
 # Dataset and Dataloader
@@ -30,6 +31,13 @@ class Model(pl.LightningModule):
         scores = self.forward(x)
         loss = self.criterion(scores, y)
         #predictions = torch.max(scores, dim = 1)
+
+        #In this state, we'll see the training pictures
+        if batch_idx % 100 == 0:
+            imgs = x[:8]
+            grid = torchvision.utils.make_grid(x.view(-1, 1, 28, 28))
+            self.logger.experiment.add_image('MNIST_Images', grid, self.global_step)
+
         return loss, scores, y
 
 
